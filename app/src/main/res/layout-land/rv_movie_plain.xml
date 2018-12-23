@@ -21,6 +21,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="serif"
         android:maxLines="3"
         android:textAlignment="center"
         android:textAllCaps="false"
@@ -37,11 +38,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/ivBackdrop"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:layout_constraintVertical_bias="0.41"
         tools:text="This is a sample descrpition of a sample movie.  It contains a brief and compelling plot overview along with some genre-specific qualifiers" />
 </android.support.constraint.ConstraintLayout>
