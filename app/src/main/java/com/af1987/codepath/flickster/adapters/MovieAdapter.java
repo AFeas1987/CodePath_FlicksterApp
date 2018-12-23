@@ -61,17 +61,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDesc;
-        ImageView ivPoster, ivBackdrop;
+        ImageView ivPoster, ivBackdrop, ivBackground;
         View itemView;
 
-        private SimpleTarget<Drawable> target = new SimpleTarget<Drawable>() {
-            @Override
-            public void onResourceReady(@NonNull Drawable resource,
-                        @Nullable Transition<? super Drawable> transition) {
-                itemView.setBackground(resource);
-                itemView.getBackground().setAlpha(100);
-            }
-        };
+//        private SimpleTarget<Drawable> target = new SimpleTarget<Drawable>() {
+//            @Override
+//            public void onResourceReady(@NonNull Drawable resource,
+//                        @Nullable Transition<? super Drawable> transition) {
+//                itemView.setBackground(resource);
+//                itemView.getBackground().setAlpha(100);
+//            }
+//        };
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +79,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvDesc = itemView.findViewById(R.id.tvDesc);
             ivPoster = itemView.findViewById(R.id.ivPoster);
             ivBackdrop = itemView.findViewById(R.id.ivBackdrop);
+            ivBackground = itemView.findViewById(R.id.ivBackground);
             this.itemView = itemView;
         }
 
@@ -100,10 +101,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                         .transform(new RoundedCorners(8)))
                         .into(ivBackdrop);
             if (movie.getPopularity() > 200) {
-                Glide.with(context).load(movie.getBackdropPath())
-                        .apply(new RequestOptions()
-                        .transform(new RoundedCorners(16)))
-                        .into(target);
+                ivBackground.setVisibility(View.VISIBLE);
+                ivBackground.setAlpha(0.3f);
+                Glide.with(context).load(movie.getBackdropPath()).into(ivBackground);
             }
         }
     }
