@@ -3,15 +3,20 @@ package com.af1987.codepath.flickster.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie {
+@Parcel
+public class Movie{
 
     private String posterPath, backdropPath;
-    private String title, desc;
-    private int popularity;
+    private String title, desc, trailerKey;
+    private int popularity, id;
+    private double rating;
+
+    private Movie(){};
 
     private Movie(JSONObject json) throws JSONException {
         posterPath = json.getString("poster_path");
@@ -19,18 +24,39 @@ public class Movie {
         desc = json.getString("overview");
         backdropPath = json.getString("backdrop_path");
         popularity = json.getInt("popularity");
+        rating = json.getDouble("vote_average");
+        id = json.getInt("id");
     }
 
     public String getTitle() {return title;}
     public String getDesc() {return desc;}
-    public int getPopularity() {return popularity;}
+    public boolean isPopular() {return popularity > 200;}
+    public double getRating() {return rating;}
+    public int getId() {return id;}
+    public String getTrailerKey() {return trailerKey;}
+    public void setTrailerKey(String trailerKey) {this.trailerKey = trailerKey;}
 
-    public String getPosterPath() {
-        return String.format("https://image.tmdb.org/t/p/w342/%s", posterPath);
+    public String getPosterPath(int quality) {
+        return String.format("https://image.tmdb.org/t/p/"
+                + getQuality(quality)
+                + "/%s", posterPath);
     }
 
-    public String getBackdropPath() {
-        return String.format("https://image.tmdb.org/t/p/w342/%s", backdropPath);
+    public String getBackdropPath(int quality) {
+        return String.format("https://image.tmdb.org/t/p/"
+                + getQuality(quality)
+                + "/%s", backdropPath);
+    }
+
+    private String getQuality(int quality) {
+        switch (quality) {
+            case 0 :
+                return "w92";
+            case 1:
+                return "w370_and_h556_bestv2";
+            default:
+                return "original";
+        }
     }
 
     public static List<Movie> fromJSONArray (JSONArray array) throws JSONException{

@@ -10,6 +10,11 @@
         <item name="android:shadowDx">-2</item>
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">0.01</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/transform</item>
+        <item name="android:windowSharedElementExitTransition">@transition/transform</item>
+
     </style>
 
 </resources>

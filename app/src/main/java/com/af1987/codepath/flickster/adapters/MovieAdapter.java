@@ -1,45 +1,45 @@
 package com.af1987.codepath.flickster.adapters;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.af1987.codepath.flickster.R;
+import com.af1987.codepath.flickster.activity.MovieDetailActivity;
 import com.af1987.codepath.flickster.models.Movie;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
+import static com.af1987.codepath.flickster.util.GlideUtil.*;
+import static com.af1987.codepath.flickster.util.GlideUtil.Options.*;
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
-    Context context;
-    List<Movie> movies;
+    private Activity activity;
+    private List<Movie> movies;
 
-    public MovieAdapter(Context context, List<Movie> movies) {
-        this.context = context;
+    public MovieAdapter(Activity context, List<Movie> movies) {
+        this.activity = context;
         this.movies = movies;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            return new ViewHolder(LayoutInflater.from(context)
+            return new ViewHolder(LayoutInflater.from(activity)
                     .inflate(R.layout.rv_movie_plain, viewGroup, false));
     }
 
@@ -53,7 +53,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     @Override
     public int getItemViewType(int position) {
-        if (movies.get(position).getPopularity() > 200)
+        if (movies.get(position).isPopular())
             return 1;
         else
             return 0;
@@ -61,24 +61,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDesc;
-        ImageView ivPoster, ivBackdrop, ivBackground;
+        ImageView ivPoster, ivBackground;
         View itemView;
-
-//        private SimpleTarget<Drawable> target = new SimpleTarget<Drawable>() {
-//            @Override
-//            public void onResourceReady(@NonNull Drawable resource,
-//                        @Nullable Transition<? super Drawable> transition) {
-//                itemView.setBackground(resource);
-//                itemView.getBackground().setAlpha(100);
-//            }
-//        };
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDesc = itemView.findViewById(R.id.tvDesc);
             ivPoster = itemView.findViewById(R.id.ivPoster);
-            ivBackdrop = itemView.findViewById(R.id.ivBackdrop);
             ivBackground = itemView.findViewById(R.id.ivBackground);
             this.itemView = itemView;
         }
@@ -87,24 +77,85 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvTitle.setText(movie.getTitle());
             tvTitle.setPaintFlags(tvTitle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             tvDesc.setText(movie.getDesc());
-            if (context.getResources().getConfiguration()
-                    .orientation == Configuration.ORIENTATION_PORTRAIT)
-                Glide.with(context).load(movie.getPosterPath())
-                        .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_foreground)
-                        .override(480, 720)
-                        .transform(new RoundedCorners(8)))
-                        .into(ivPoster);
-            else
-                Glide.with(context).load(movie.getBackdropPath())
-                        .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_foreground)
-                        .override(800, 400)
-                        .transform(new RoundedCorners(8)))
-                        .into(ivBackdrop);
-            if (movie.getPopularity() > 200) {
-                ivBackground.setVisibility(View.VISIBLE);
-                ivBackground.setAlpha(0.3f);
-                Glide.with(context).load(movie.getBackdropPath()).into(ivBackground);
+            if (activity.getResources().getConfiguration()
+                    .orientation == Configuration.ORIENTATION_PORTRAIT) {
+                into(ivPoster, glide(activity, movie.getPosterPath(1), POSTER_LARGE,
+                        glide(activity, movie.getPosterPath(0), POSTER_LARGE.dontTransform())));
+                glide(activity, movie.getPosterPath(1), POSTER_LARGE_SKETCH).preload();
             }
+            else {
+                into(ivPoster, glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL,
+                        glide(activity, movie.getBackdropPath(0), BACKDROP_SMALL.dontTransform())));
+                glide(activity, movie.getPosterPath(1), BACKDROP_SMALL_SKETCH).preload();
+            }
+            if (movie.isPopular()) {
+                ivBackground.setVisibility(View.VISIBLE);
+                itemView.findViewById(R.id.ivPlayIcon).setVisibility(View.VISIBLE);
+                ivBackground.setAlpha(0.6f);
+                into(ivBackground, glide(activity, movie.getBackdropPath(1), BACKGROUND,
+                        glide(activity, movie.getBackdropPath(0), BACKGROUND.dontTransform())));
+                glide(activity, movie.getBackdropPath(1), BACKGROUND_SKETCH).preload();
+            }
+            itemView.setOnClickListener(v -> {
+                ActivityOptionsCompat intentOptions;
+                if (movie.isPopular())
+                    intentOptions = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(activity, Pair.create(ivPoster, ivPoster.getTransitionName()),
+                                    Pair.create(tvTitle, tvTitle.getTransitionName()),
+                                    Pair.create(tvDesc, tvDesc.getTransitionName()),
+                                    Pair.create(ivBackground, ivBackground.getTransitionName()));
+                else
+                    intentOptions = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(activity, Pair.create(ivPoster, ivPoster.getTransitionName()),
+                                    Pair.create(tvTitle, tvTitle.getTransitionName()),
+                                    Pair.create(tvDesc, tvDesc.getTransitionName()));
+                Intent i = new Intent(activity, MovieDetailActivity.class);
+                i.putExtra("MOVIE", Parcels.wrap(movie));
+                activity.startActivity(i, intentOptions.toBundle());
+            });
+            itemView.setOnTouchListener(createTouchListener(movie));
+        }
+
+        private View.OnTouchListener createTouchListener(Movie movie){
+            return (v, e) -> {
+                switch (e.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (movie.isPopular())
+                            into(ivBackground, glide(activity, movie.getBackdropPath(1), BACKGROUND_SKETCH,
+                                    glide(activity, movie.getBackdropPath(1), BACKGROUND)));
+                        if (activity.getResources().getConfiguration()
+                                .orientation == Configuration.ORIENTATION_PORTRAIT)
+                            into(ivPoster, glide(activity, movie.getPosterPath(1), POSTER_LARGE_SKETCH,
+                                    glide(activity, movie.getPosterPath(1), POSTER_LARGE)));
+                        else
+                            into(ivPoster, glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL_SKETCH,
+                                    glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL)));
+                        return true;
+                    case MotionEvent.ACTION_HOVER_MOVE:
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        v.performClick();
+                        if (movie.isPopular())
+                            into(ivBackground, glide(activity, movie.getBackdropPath(1), BACKGROUND));
+                        if (activity.getResources().getConfiguration()
+                                .orientation == Configuration.ORIENTATION_PORTRAIT)
+                            into(ivPoster, glide(activity, movie.getPosterPath(1), POSTER_LARGE));
+                        else
+                            into(ivPoster, glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL));
+                        return true;
+                    case MotionEvent.ACTION_CANCEL:
+                        if (movie.isPopular())
+                            into(ivBackground, glide(activity, movie.getBackdropPath(1), BACKGROUND));
+                        if (activity.getResources().getConfiguration()
+                                .orientation == Configuration.ORIENTATION_PORTRAIT)
+                            into(ivPoster, glide(activity, movie.getPosterPath(1), POSTER_LARGE));
+                        else
+                            into(ivPoster, glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL));
+                        return false;
+                    default:
+                        return false;
+                }
+            };
         }
     }
 }

@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
+        android:transitionName="BACKGROUND"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,26 +20,42 @@
         tools:srcCompat="@tools:sample/backgrounds/scenic[5]" />
 
     <ImageView
-        android:id="@+id/ivBackdrop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/ivPoster"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
+        android:scaleType="fitCenter"
+        android:transitionName="POSTER"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         tools:srcCompat="@tools:sample/avatars[0]" />
 
+    <ImageView
+        android:id="@+id/ivPlayIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/ivPoster"
+        app:layout_constraintEnd_toEndOf="@+id/ivPoster"
+        app:layout_constraintStart_toStartOf="@+id/ivPoster"
+        app:layout_constraintTop_toTopOf="@+id/ivPoster"
+        app:srcCompat="@mipmap/yt_play_icon" />
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="serif"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-condensed"
         android:maxLines="3"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="30sp"
         android:textStyle="bold"
+        android:transitionName="TITLE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,10 +69,11 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:maxLines="12"
+        android:transitionName="DESC"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivBackdrop"
+        app:layout_constraintStart_toEndOf="@+id/ivPoster"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:layout_constraintVertical_bias="0.41"
         tools:text="This is a sample descrpition of a sample movie.  It contains a brief and compelling plot overview along with some genre-specific qualifiers" />
