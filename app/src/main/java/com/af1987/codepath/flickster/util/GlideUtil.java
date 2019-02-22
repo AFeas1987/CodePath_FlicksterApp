@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions;
 import jp.wasabeef.glide.transformations.gpu.SketchFilterTransformation;
 import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
 
+
 public final class GlideUtil {
 
     public static void into(ImageView iv, RequestBuilder request) {

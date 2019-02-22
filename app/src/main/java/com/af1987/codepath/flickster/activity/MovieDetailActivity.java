@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -21,7 +20,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
@@ -37,8 +35,11 @@ import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.af1987.codepath.flickster.util.GlideUtil.*;
-import static com.af1987.codepath.flickster.util.GlideUtil.Options.*;
+import static com.af1987.codepath.flickster.util.GlideUtil.Options.BACKDROP_SMALL;
+import static com.af1987.codepath.flickster.util.GlideUtil.Options.BACKGROUND;
+import static com.af1987.codepath.flickster.util.GlideUtil.Options.POSTER_SMALL;
+import static com.af1987.codepath.flickster.util.GlideUtil.glide;
+import static com.af1987.codepath.flickster.util.GlideUtil.into;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         RequestListener<Drawable> {
@@ -72,12 +73,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
             ivBackground.setAlpha(0.7f);
             into(ivBackground, glide(this, movie.getBackdropPath(1),
                     BACKGROUND.onlyRetrieveFromCache(true)).listener(this));
+        }
         if (getResources().getConfiguration()
                 .orientation == Configuration.ORIENTATION_PORTRAIT)
-            into(ivPoster, glide(this, movie.getPosterPath(1), POSTER_SMALL.onlyRetrieveFromCache(true)));
+            into(ivPoster, glide(this, movie.getPosterPath(1), POSTER_SMALL));
         else
-            into(ivPoster, glide(this, movie.getBackdropPath(1), BACKDROP_SMALL.onlyRetrieveFromCache(true)));
-        }
+            into(ivPoster, glide(this, movie.getBackdropPath(1), BACKDROP_SMALL));
         new AsyncHttpClient().get(String.format(Locale.ENGLISH, _TRAILERS_API_, movie.getId()), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -100,7 +101,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
                                     ytp.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
                                 }
                                 @Override
-                                public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult result) {}
+                                public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult result) {
+                                    Log.d("_AF", "onInitializationFailure: " + result.toString());
+                                }
                             });
                 } catch (JSONException e) {Log.d("_AF", e.getMessage());}
             }

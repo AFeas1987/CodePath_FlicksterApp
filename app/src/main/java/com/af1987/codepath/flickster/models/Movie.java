@@ -11,12 +11,12 @@ import java.util.List;
 @Parcel
 public class Movie{
 
-    private String posterPath, backdropPath;
-    private String title, desc, trailerKey;
-    private int popularity, id;
-    private double rating;
+    String posterPath, backdropPath;
+    String title, desc, trailerKey;
+    int popularity, id;
+    double rating;
 
-    private Movie(){};
+    Movie(){}
 
     private Movie(JSONObject json) throws JSONException {
         posterPath = json.getString("poster_path");

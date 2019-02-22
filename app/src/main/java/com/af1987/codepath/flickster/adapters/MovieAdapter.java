@@ -80,12 +80,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             if (activity.getResources().getConfiguration()
                     .orientation == Configuration.ORIENTATION_PORTRAIT) {
                 into(ivPoster, glide(activity, movie.getPosterPath(1), POSTER_LARGE,
-                        glide(activity, movie.getPosterPath(0), POSTER_LARGE.dontTransform())));
+                        glide(activity, movie.getPosterPath(0), POSTER_LARGE)));
                 glide(activity, movie.getPosterPath(1), POSTER_LARGE_SKETCH).preload();
             }
             else {
                 into(ivPoster, glide(activity, movie.getBackdropPath(1), BACKDROP_SMALL,
-                        glide(activity, movie.getBackdropPath(0), BACKDROP_SMALL.dontTransform())));
+                        glide(activity, movie.getBackdropPath(0), BACKDROP_SMALL)));
                 glide(activity, movie.getPosterPath(1), BACKDROP_SMALL_SKETCH).preload();
             }
             if (movie.isPopular()) {
@@ -93,7 +93,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                 itemView.findViewById(R.id.ivPlayIcon).setVisibility(View.VISIBLE);
                 ivBackground.setAlpha(0.6f);
                 into(ivBackground, glide(activity, movie.getBackdropPath(1), BACKGROUND,
-                        glide(activity, movie.getBackdropPath(0), BACKGROUND.dontTransform())));
+                        glide(activity, movie.getBackdropPath(0), BACKGROUND)));
                 glide(activity, movie.getBackdropPath(1), BACKGROUND_SKETCH).preload();
             }
             itemView.setOnClickListener(v -> {
